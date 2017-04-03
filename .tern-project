@@ -1,0 +1,23 @@
+{
+  "ecmaVersion": 6,
+  "plugins": {
+    "node": { },
+    "es_modules": { },
+    "doc_comment": {
+      "full_docs": true,
+      "strong": true,
+    },
+    "complete_strings": { },
+    "lint": { }
+  },
+  "loadEagerly": [
+    "./node_modules/react/**/*.js",
+    "node_modules/react-dom/dist/react-dom.js",
+    "node_modules/react-dom/dist/react-dom-server.js",
+  ],
+  "libs": [
+    "browser",
+    "ecma5",
+    "ecma6",
+  ],
+}
