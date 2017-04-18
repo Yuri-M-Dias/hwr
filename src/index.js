@@ -4,5 +4,6 @@ import Detail from './pages/Detail.js';
 
 ReactDOM.render(
   <Detail message="This is coming from props!" />,
-  document.getElementById('app')
+  document.getElementById('app'),
 );
+
