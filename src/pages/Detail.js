@@ -1,75 +1,62 @@
 import React from 'react';
 import ajax from 'superagent';
+import Link from 'react-router';
 
 class Detail extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { forks: [], commits: [], pulls: [], view: 1 };
+    this.state = { forks: [], commits: [], pulls: [], mode: 'commits' };
   }
 
   componentWillMount() {
+    this.fetchFeed('commits');
+    this.fetchFeed('forks');
+    this.fetchFeed('pulls');
+  }
+
+  fetchFeed(type) {
     ajax
-      .get('https://api.github.com/repos/facebook/react/commits')
+      .get(`https://api.github.com/repos/facebook/react/${type}`)
       .end((error, response) => {
         if (!error && response) {
           console.dir(response.body);
-          this.setState({ commits: response.body });
+          this.setState({ [type]: response.body });
         } else {
-          console.log('There was an error fetching from GitHub', error);
-        }
-      });
-    ajax
-      .get('https://api.github.com/repos/facebook/react/forks')
-      .end((error, response) => {
-        if (!error && response) {
-          console.dir(response.body);
-          this.setState({ forks: response.body });
-        } else {
-          console.log('There was an error fetching from GitHub', error);
-        }
-      });
-    ajax
-      .get('https://api.github.com/repos/facebook/react/pulls')
-      .end((error, response) => {
-        if (!error && response) {
-          console.dir(response.body);
-          this.setState({ pulls: response.body });
-        } else {
-          console.log('There was an error fetching from GitHub', error);
+          console.log(`Error fetching ${type}`, error);
         }
       });
   }
 
-  buttonClicked(viewId) {
-    this.setState({ view: viewId });
+  selectMode(mode) {
+    this.setState({ mode });
   }
 
   renderButtons() {
     return (
       <div>
-        <button onClick={() => this.buttonClicked(1)}>Commits</button>
-        <button onClick={() => this.buttonClicked(2)}>Pulls</button>
-        <button onClick={() => this.buttonClicked(3)}>Forks</button>
+        <button onClick={this.selectMode.bind(this, 'commits')}>Commits</button>
+        <button onClick={this.selectMode.bind(this, 'forks')}>Forks</button>
+        <button onClick={this.selectMode.bind(this, 'pulls')}>Pulls</button>
       </div>
     );
   }
 
-  renderSelectedView() {
-    let selectedView;
-    switch (this.state.view) {
-      case 1:
-        selectedView = this.renderCommits();
+  renderSelectedMode() {
+    let selectedMode;
+    switch (this.state.mode) {
+      case 'commits':
+        selectedMode = this.renderCommits();
         break;
-      case 2:
-        selectedView = this.renderPullRequests();
+      case 'pulls':
+        selectedMode = this.renderPullRequests();
         break;
-      case 3:
-        selectedView = this.renderForks();
+      case 'forks':
+        selectedMode = this.renderForks();
         break;
     }
     return (
       <div>
-        {selectedView}
+        {selectedMode}
       </div>
     );
   }
@@ -125,7 +112,7 @@ class Detail extends React.Component {
     return (
       <div>
         {this.renderButtons()}
-        {this.renderSelectedView()}
+        {this.renderSelectedMode()}
       </div>
     );
   }
